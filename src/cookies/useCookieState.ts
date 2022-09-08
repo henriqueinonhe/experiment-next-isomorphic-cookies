@@ -6,14 +6,18 @@ const useClientSideCookieState = <T>(
   key: string,
   initializer: (storedValue: T | undefined) => T
 ) => {
-  const { retrieve, store, clear, ssg } = useCookie<T>(key);
+  const { retrieve, store, clear, ssg, isHydrating } = useCookie<T>(key);
+
+  const needsSyncAfterHydration = ssg && isHydrating;
+
+  console.log({ ssg, isHydrating });
 
   const [value, setValue] = useState<T>(() =>
-    initializer(ssg ? undefined : retrieve())
+    initializer(needsSyncAfterHydration ? undefined : retrieve())
   );
 
   useIsomorphicLayoutEffect(() => {
-    if (ssg) {
+    if (needsSyncAfterHydration) {
       boundRetrieve();
     }
   }, []);
@@ -42,11 +46,9 @@ const useServerSideCookieState = <T>(
   key: string,
   initializer: (storedValue: T | undefined) => T
 ) => {
-  const { retrieve, ssg } = useCookie<T>(key);
+  const { retrieve } = useCookie<T>(key);
 
-  const [value, setValue] = useState<T>(() =>
-    initializer(ssg ? undefined : retrieve())
-  );
+  const [value, setValue] = useState<T>(() => initializer(retrieve()));
 
   const boundRetrieve = () => undefined;
 
