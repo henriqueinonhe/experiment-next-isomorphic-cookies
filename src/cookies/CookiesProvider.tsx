@@ -1,10 +1,12 @@
 import { createContext, ReactNode } from "react";
 
+export const SSGMarker = Symbol();
+
 type CookiesContextValue = Record<string, string>;
 
-export const CookiesContext = createContext<CookiesContextValue | undefined>(
-  undefined
-);
+export const CookiesContext = createContext<
+  CookiesContextValue | typeof SSGMarker | undefined
+>(undefined);
 
 type CookiesProviderProps = {
   children: ReactNode;

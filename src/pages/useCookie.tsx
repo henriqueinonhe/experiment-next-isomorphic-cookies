@@ -16,7 +16,7 @@ const Page = ({ data }: PageProps) => {
 };
 
 const Component = () => {
-  const { retrieve, store } = useCookie("SomeCookie");
+  const { retrieve, store } = useCookie<string>("SomeCookie");
 
   const [state, setState] = useState<string>(retrieve() ?? "");
 

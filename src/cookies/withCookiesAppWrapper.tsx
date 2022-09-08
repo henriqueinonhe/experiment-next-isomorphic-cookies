@@ -1,5 +1,5 @@
 import { AppProps } from "next/app";
-import { CookiesProvider } from "./CookiesProvider";
+import { CookiesProvider, SSGMarker } from "./CookiesProvider";
 
 type App<P extends {}> = (props: AppProps<P>) => JSX.Element;
 
@@ -9,17 +9,16 @@ type WithCookiesProps = {
 
 type AppWithCookies<P extends {}> = (
   props: AppProps<P> & {
-    pageProps: WithCookiesProps
+    pageProps: WithCookiesProps;
   }
 ) => JSX.Element;
-
 
 export const withCookiesAppWrapper =
   <P extends {}>(App: App<P>): AppWithCookies<P> =>
   // eslint-disable-next-line react/display-name
   (props) => {
     return (
-      <CookiesProvider cookies={props.pageProps.cookies}>
+      <CookiesProvider cookies={props.pageProps.cookies ?? SSGMarker}>
         <App {...props} />
       </CookiesProvider>
     );
