@@ -39,13 +39,13 @@ const Component = () => {
   );
 };
 
-// export const getServerSideProps =
-//   withCookiesGetServerSidePropsWrapper<PageProps>(async () => {
-//     return {
-//       props: {
-//         data: "Something",
-//       },
-//     };
-//   });
+export const getServerSideProps =
+  withCookiesGetServerSidePropsWrapper<PageProps>(async () => {
+    return {
+      props: {
+        data: "SSR",
+      },
+    };
+  });
 
 export default Page;

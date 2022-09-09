@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CookiesContext, SSGMarker } from "./CookiesProvider";
+import { CookiesContext } from "./CookiesProvider";
 
 export const useInitialCookies = () => {
   const initialCookies = useContext(CookiesContext);

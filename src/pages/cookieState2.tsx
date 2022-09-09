@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useCookieState } from "../cookies/useCookieState";
-import { withCookiesGetServerSidePropsWrapper } from "../cookies/withCookiesGetServerSidePropsWrapper";
 
 type PageProps = {
   data: string;
@@ -39,19 +38,10 @@ const Component = () => {
   );
 };
 
-export const getServerSideProps =
-  withCookiesGetServerSidePropsWrapper<PageProps>(async () => {
-    return {
-      props: {
-        data: "Something",
-      },
-    };
-  });
-
-// export const getServerSideProps = async () => ({
-//   props: {
-//     data: "Something",
-//   },
-// });
+export const getStaticProps = async () => ({
+  props: {
+    data: "SSG",
+  },
+});
 
 export default Page;

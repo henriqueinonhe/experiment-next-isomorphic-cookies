@@ -1,11 +1,8 @@
-import { createContext, ReactNode, useMemo, useRef } from "react";
-
-export const SSGMarker = Symbol();
+import { createContext, ReactNode, useMemo } from "react";
 
 type CookiesContextValue = {
-  initialCookies: Record<string, string>;
-  isHydrating: boolean;
-  ssg: boolean;
+  cookiesInServer: Record<string, string> | null;
+  isHydratingRef: { current: boolean };
 };
 
 export const CookiesContext = createContext<CookiesContextValue | undefined>(
@@ -14,26 +11,21 @@ export const CookiesContext = createContext<CookiesContextValue | undefined>(
 
 type CookiesProviderProps = {
   children: ReactNode;
-  cookies: Record<string, string> | typeof SSGMarker;
+  cookies: Record<string, string> | null;
+  isHydratingRef: { current: boolean };
 };
 
 export const CookiesProvider = ({
   children,
   cookies,
+  isHydratingRef,
 }: CookiesProviderProps) => {
-  const ssg = cookies === SSGMarker;
-  const isHydratingRef = useRef(true);
-  const isHydrating = isHydratingRef.current;
-
-  isHydratingRef.current = false;
-
   const value = useMemo(
     () => ({
-      isHydrating,
-      initialCookies: ssg ? {} : cookies,
-      ssg,
+      isHydratingRef,
+      cookiesInServer: cookies,
     }),
-    [cookies, isHydrating, ssg]
+    [cookies, isHydratingRef]
   );
 
   return (

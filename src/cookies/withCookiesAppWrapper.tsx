@@ -1,5 +1,5 @@
 import { AppProps } from "next/app";
-import { CookiesProvider, SSGMarker } from "./CookiesProvider";
+import { CookiesProvider } from "./CookiesProvider";
 
 type App<P extends {}> = (props: AppProps<P>) => JSX.Element;
 
@@ -13,13 +13,24 @@ type AppWithCookies<P extends {}> = (
   }
 ) => JSX.Element;
 
-export const withCookiesAppWrapper =
-  <P extends {}>(App: App<P>): AppWithCookies<P> =>
+export const withCookiesAppWrapper = <P extends {}>(
+  App: App<P>
+): AppWithCookies<P> => {
+  // We need to create this outside the component,
+  // because it might get remounted
+  let isHydratingRef = {
+    current: true,
+  };
+
   // eslint-disable-next-line react/display-name
-  (props) => {
+  return (props) => {
     return (
-      <CookiesProvider cookies={props.pageProps.cookies ?? SSGMarker}>
+      <CookiesProvider
+        cookies={props.pageProps.cookies ?? null}
+        isHydratingRef={isHydratingRef}
+      >
         <App {...props} />
       </CookiesProvider>
     );
   };
+};

@@ -1,26 +1,20 @@
 import { useState } from "react";
-import { useIsomorphicLayoutEffect } from "../hooks/useIsomorphicLayoutEffect";
 import { useCookie } from "./useCookie";
+import { useSyncWithCookie } from "./useSyncWithCookie";
 
 const useClientSideCookieState = <T>(
   key: string,
   initializer: (storedValue: T | undefined) => T
 ) => {
-  const { retrieve, store, clear, ssg, isHydrating } = useCookie<T>(key);
-
-  const needsSyncAfterHydration = ssg && isHydrating;
-
-  console.log({ ssg, isHydrating });
+  const { retrieve, store, clear, needsSyncAfterHydration } = useCookie<T>(key);
 
   const [value, setValue] = useState<T>(() =>
     initializer(needsSyncAfterHydration ? undefined : retrieve())
   );
 
-  useIsomorphicLayoutEffect(() => {
-    if (needsSyncAfterHydration) {
-      boundRetrieve();
-    }
-  }, []);
+  useSyncWithCookie<T>(key, () => {
+    boundRetrieve();
+  });
 
   const boundRetrieve = () => {
     const storedValue = retrieve();
@@ -46,26 +40,24 @@ const useServerSideCookieState = <T>(
   key: string,
   initializer: (storedValue: T | undefined) => T
 ) => {
-  const { retrieve } = useCookie<T>(key);
+  const { clear, retrieve } = useCookie<T>(key);
 
   const [value, setValue] = useState<T>(() => initializer(retrieve()));
 
-  const boundRetrieve = () => undefined;
-
-  const boundStore = () => {
-    throw new Error("Cannot set cookie during server side rendering!");
+  const boundRetrieve = () => {
+    const storedValue = retrieve();
+    setValue(storedValue ?? initializer(storedValue));
   };
 
-  const boundClear = () => {
-    throw new Error("Cannot clear cookie during server side rendering!");
-  };
+  // No Op
+  const boundStore = () => undefined;
 
   return {
     value,
     setValue,
     retrieve: boundRetrieve,
     store: boundStore,
-    clear: boundClear,
+    clear,
   };
 };
 
