@@ -1,5 +1,5 @@
+import { useCookieState } from "next-isomorphic-cookies";
 import Link from "next/link";
-import { useCookieState } from "../cookies/useCookieState";
 
 type PageProps = {
   data: string;
@@ -28,8 +28,8 @@ const Component = () => {
           value={value}
           onChange={(event) => setValue(() => event.target.value)}
         />
-        <button onClick={retrieve}>Retrieve</button>
-        <button onClick={store}>Store</button>
+        <button onClick={() => retrieve()}>Retrieve</button>
+        <button onClick={() => store()}>Store</button>
       </div>
       <Link href="/cookieState">
         <a>To Page 1</a>

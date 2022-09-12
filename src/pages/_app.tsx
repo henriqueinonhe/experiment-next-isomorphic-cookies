@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { withCookiesAppWrapper } from "../cookies/withCookiesAppWrapper";
+import { withCookiesAppWrapper } from "next-isomorphic-cookies";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
